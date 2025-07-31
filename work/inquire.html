@@ -23,19 +23,19 @@
                 <p>
                     I, with the help of my team, designed and built a central user data service for personalization of
                     more than 100 local newspapers.
-                    The service integrated <em>data usage monitoring</em> to give data owners high-resolution insight
-                    into what
-                    data was consumed by who, <em>user consent information</em> to give consumers confidence that they
-                    were using data correctly, and <em>data governance</em> to ensure the data platform owners that the
-                    service provided up-to-date and valid information.
+                    The service integrates <em>data usage monitoring</em> to give data owners high-resolution insight
+                    into what data is consumed by whom, <em>user consent information</em> to give consumers confidence
+                    that they are using data correctly, and <em>data governance</em> which ensures the data platform
+                    owners that the service provides up-to-date and valid information.
                     Furthermore, to remove the platform team as a bottleneck when adding user attributes, the service
-                    was designed to be as simple to administrate as possible, and includes a well-thought-out management
+                    is designed to be as simple to administrate as possible, and includes a well-thought-out management
                     panel.
                 </p>
             </section>
             <section>
                 <h3>Background</h3>
                 <p>
+
                     At my current company, <a href="https://www.amedia.no/">Amedia</a>, we host and develop for more
                     than 100 local newspaper across Norway.
                     A portion of Amedia's success is owed to partially personalized front pages, along with personalized
@@ -87,13 +87,31 @@
                 </p>
                 <p>
                     While the previous iterations of the user data service has provided tremendous value for Amedia,
-                    Inquire was built to address these shortcomings.
+                    Inquire was built to address the shortcomings listed above.
                 </p>
             </section>
             <section>
                 <h3>Service description and architecture</h3>
                 <p>
-                    Inquire is 
+                    Inquire is a system composed of a central database containing the user data and attribute catalogs,
+                    a HTTP/JSON service that serves this data to logged-in clients and other backend services,
+                    and multiple support components, including a management dashboard and pipelines for batch and stream
+                    ingestion.
+                </p>
+                <p>
+                    Almost all user analytics data lives in Google BigQuery, and is updated at most daily.
+                    The batch ingest pipeline regularly checks source tables for updates and makes sure that the latest
+                    data is imported to the Inquire database.
+                    Other data, like users' consents to data usage are retrieved from message queues via the stream
+                    ingestor, immediately following changes to the user's preferences.
+                </p>
+                <p>
+                    The database schema is based on the <a
+                        href="https://en.wikipedia.org/wiki/Entity%E2%80%93attribute%E2%80%93value_model">entity-attribute-value</a>
+                    (EAV) model, where the main database table has one row per user per attribute, and a single data
+                    value column.
+                    The value column is <code>jsonb</code> (this is a Postgres database), allowing for a variety of
+                    stored data types.
                 </p>
             </section>
         </article>
