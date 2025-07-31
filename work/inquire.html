@@ -33,6 +33,69 @@
                     panel.
                 </p>
             </section>
+            <section>
+                <h3>Background</h3>
+                <p>
+                    At my current company, <a href="https://www.amedia.no/">Amedia</a>, we host and develop for more
+                    than 100 local newspaper across Norway.
+                    A portion of Amedia's success is owed to partially personalized front pages, along with personalized
+                    marketing and communications.
+                    Amedia's backend is a collection of (micro) services called in a variety of situations, e.g., to
+                    serve the contents of an article, a front-page teaser, or marketing messages.
+                </p>
+                <p>
+                    Since each page load is partially tailored to the logged in user, many of the backend services
+                    require attributes of the user in order to function optimally.
+                    A large portion of this data is based on gathered analytics, and produced and hosted in our data
+                    lake.
+                    This lake is naturally optimized for analytical workloads.
+                    Performance (and cost) for single-row access (i.e., for a particular user) is infeasible.
+                    To support in-flight requests for analytical user data, Amedia has over the course of several years,
+                    developed multiple services that host selections of user attributes.
+                    <em>Inquire</em> is the third iteration of a user data service made for these purposes.
+                    The previous two have been retired for the following reasons:
+                <ul>
+                    <li>
+                        Monitoring was not built in: No monitoring of data usage made it hard to know what data was
+                        actually used, so it was hard to retire attributes.
+                        Each request returned all data attributes, so if a client needed a single datapoint, it was
+                        impossible to know which.
+                    </li>
+                    <li>
+                        User consent data was not integrated: Clients had to ask a separate service for data usage
+                        consent to know if they could use analytics data.
+                    </li>
+                    <li>
+                        <p>
+                            Significant work to add user attributes: Marketing teams move fast to test which
+                            personalized messages have desired effects on users.
+                            We have considerable amounts of analytics data on our readers, so when these teams generate
+                            or discover interesting attributes in our lake, it helps them if they can quickly get this
+                            data out to the user data service.
+                        </p>
+                        <p>
+                            Previous iterations of user data services have had hard-coded model and response type in the
+                            service application.
+                            Additionally, the database schema for these services have had a one-row-per-user layout.
+                            While this is great for type safety, it makes the user data service maintainers the main
+                            bottleneck for appending attributes to users.
+                            This requires significant work: Schema migrations; addition of models for ingest, retrieval
+                            and response; transformations between these models.
+                        </p>
+                    </li>
+                </ul>
+                </p>
+                <p>
+                    While the previous iterations of the user data service has provided tremendous value for Amedia,
+                    Inquire was built to address these shortcomings.
+                </p>
+            </section>
+            <section>
+                <h3>Service description and architecture</h3>
+                <p>
+                    Inquire is 
+                </p>
+            </section>
         </article>
     </main>
 </body>
