@@ -74,12 +74,14 @@
                         Combined with each request returning <em>all</em> user data, it made attribute usage information
                         hard to find.
                     </dd>
+
                     <dt>Out-of-band consent data</dt>
                     <dd>
                         Whether the user consented to use of attributes for personalized ads, communications, marketing
                         or editorial content had to be requested from separate services.
                         This caused unnecessary complexity for data consumers.
                     </dd>
+
                     <dt>Platform bottleneck</dt>
                     <dd>
                         Appending user attributes required significant work for the maintaining platform team.
@@ -93,8 +95,24 @@
                     Inquire was built to confront the challenges listed above.
                 </p>
             </section>
+
             <section>
-                <h3>Service description and architecture</h3>
+                <h3>System overview</h3>
+                <p>
+                    Inquire consists of a central <strong>Postgres database</strong>, an <strong>HTTP/JSON
+                        service</strong> that serves user data to downstream consumers, and a suite of support
+                    components:
+                </p>
+                <dl>
+                    <dt>Batch ingestion pipeline</dt>
+                    <dd>for periodic loading from the data lake.</dd>
+
+                    <dt>Stream ingestion pipeline</dt>
+                    <dd>for real-time updates (e.g., user consent).</dd>
+
+                    <dt>Management dashboard</dt>
+                    <dd>for attribute onboarding and observability.</dd>
+                </dl>
                 <p>
                     Inquire is a system composed of a central database containing the user data and attribute catalogs,
                     a HTTP/JSON service that serves this data to logged-in clients and other backend services,
@@ -116,6 +134,47 @@
                     The value column is <code>jsonb</code> (this is a Postgres database), allowing for a variety of
                     stored data types.
                 </p>
+            </section>
+            <section>
+                <h3>Key challenges</h3>
+                A selection of key challenges and areas where I had important contributions.
+                <section>
+                    <h4>Navigating our internal development platform</h4>
+                    <p>
+                        Amedia is my first job focused mainly on web development.
+                        Having a background from research and robotics, I had very little in-depth experience with
+                        topics like HTTP, REST (whatever that means), databases, and caching.
+                        Amedia is an organization where it's possible to move fast and spin up new backends to solve
+                        narrow problems on a whim.
+                        This also means that cohesion and uniformity is not the main priority.
+                        The GitHub organization has close to a thousand repositories in <span
+                            title="In my very short investigation, I found the following languages: Python, Rust, Go, Kotlin, Java, Javascript, Clojure, Swift, Typescript, Dart, Scala, Php, Ruby.">than
+                            13 languages(!)</span>.
+                    </p>
+                    <p>
+                        As the sole developer on our data platform team with the time and motivation for developing API
+                        services, moving from task to deployment was a challenge.
+                        Especially since most of the consepts were new to me.
+                        When I started this work, much of the knowledge needed to deploy a service was distributed among
+                        the many teams, and a uniform guide or a "golden path" did not exist.
+                        For a while I was the annoying guy constantly asking questions to our IDP team to get from start
+                        to finish.
+                    </p>
+                </section>
+                <section>
+                    <h4>Flexible data modeling with EAV</h4>
+                    <p>
+                        A key design choice in Inquire is an entity-attribute-value data model.
+                        This removes the need for schema migrations or application changes changes when a new attribute
+                        is added.
+                        Each row contains a user ID, an attribute ID which references an attribute catalog, a bit of
+                        metadata, and the data value itself, stored as JSON.
+                        The attribute catalog contains a human-readable name and expected type information.
+                    </p>
+                </section>
+                <section>
+                    <h4>Management dashboard</h4>
+                </section>
             </section>
         </article>
     </main>
