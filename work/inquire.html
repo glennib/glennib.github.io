@@ -21,23 +21,34 @@
             <section>
                 <h3>TLDR</h3>
                 <p>
-                    I, with the help of my team, designed and built a central user data service for personalization of
-                    more than 100 local newspapers.
-                    The service integrates <em>data usage monitoring</em> to give data owners high-resolution insight
-                    into what data is consumed by whom, <em>user consent information</em> to give consumers confidence
-                    that they are using data correctly, and <em>data governance</em> which ensures the data platform
-                    owners that the service provides up-to-date and valid information.
-                    Furthermore, to remove the platform team as a bottleneck when adding user attributes, the service
-                    is designed to be as simple to administrate as possible, and includes a well-thought-out management
-                    panel.
+                    I led the design and development of <em>Inquire</em>, a centralized user data service powering
+                    personalization across more than 100 local newspapers.
                 </p>
+                <ul>
+                    <li>
+                        Adopted an entity-attribute-value (EAV) data model for flexibility and rapid onboarding of new
+                        user attributes.
+                    </li>
+                    <li>
+                        Built an attribute catalog and intuitive management panel to enable high degree of self-service
+                        and reduce platform bottlenecks.
+                    </li>
+                    <li>
+                        Integrated monitoring to provide data owners with high-resolution insights into usage patterns.
+                    </li>
+                    <li>
+                        Incorporated user consent data, ensuring compliant and confident data access for consumers.
+                    </li>
+                    <li>
+                        Implemented in-flight type checking to guarantee the correctness of delivered data.
+                    </li>
+                </ul>
             </section>
             <section>
                 <h3>Background</h3>
                 <p>
-
-                    At my current company, <a href="https://www.amedia.no/">Amedia</a>, we host and develop for more
-                    than 100 local newspaper across Norway.
+                    At <a href="https://www.amedia.no/">Amedia</a>, we host and develop for more than 100 local
+                    newspaper across Norway.
                     A portion of Amedia's success is owed to partially personalized front pages, along with personalized
                     marketing and communications.
                     Amedia's backend is a collection of (micro) services called in a variety of situations, e.g., to
@@ -46,48 +57,40 @@
                 <p>
                     Since each page load is partially tailored to the logged in user, many of the backend services
                     require attributes of the user in order to function optimally.
-                    A large portion of this data is based on gathered analytics, and produced and hosted in our data
-                    lake.
-                    This lake is naturally optimized for analytical workloads.
-                    Performance (and cost) for single-row access (i.e., for a particular user) is infeasible.
-                    To support in-flight requests for analytical user data, Amedia has over the course of several years,
-                    developed multiple services that host selections of user attributes.
-                    <em>Inquire</em> is the third iteration of a user data service made for these purposes.
-                    The previous two have been retired for the following reasons:
-                <ul>
-                    <li>
-                        Monitoring was not built in: No monitoring of data usage made it hard to know what data was
-                        actually used, so it was hard to retire attributes.
-                        Each request returned all data attributes, so if a client needed a single datapoint, it was
-                        impossible to know which.
-                    </li>
-                    <li>
-                        User consent data was not integrated: Clients had to ask a separate service for data usage
-                        consent to know if they could use analytics data.
-                    </li>
-                    <li>
-                        <p>
-                            Significant work to add user attributes: Marketing teams move fast to test which
-                            personalized messages have desired effects on users.
-                            We have considerable amounts of analytics data on our readers, so when these teams generate
-                            or discover interesting attributes in our lake, it helps them if they can quickly get this
-                            data out to the user data service.
-                        </p>
-                        <p>
-                            Previous iterations of user data services have had hard-coded model and response type in the
-                            service application.
-                            Additionally, the database schema for these services have had a one-row-per-user layout.
-                            While this is great for type safety, it makes the user data service maintainers the main
-                            bottleneck for appending attributes to users.
-                            This requires significant work: Schema migrations; addition of models for ingest, retrieval
-                            and response; transformations between these models.
-                        </p>
-                    </li>
-                </ul>
+                    Much of this data lives in our data lake, which is not optimized for fast, single-row acces (i.e.,
+                    data for a single user).
                 </p>
                 <p>
-                    While the previous iterations of the user data service has provided tremendous value for Amedia,
-                    Inquire was built to address the shortcomings listed above.
+                    To support in-flight requests for user analytics, Amedia has over the course of several years
+                    developed multiple services that host selections of user attributes for fast access.
+                    <em>Inquire</em> is the third iteration of a user data service, and was made to address some
+                    challenges that were revealed along the way:
+                </p>
+                <dl>
+                    <dt>Need for high-resolution usage metrics</dt>
+                    <dd>
+                        Not having usage metrics on the attribute level left us searching in our codebases for whether
+                        or not an attribute was used if we wanted to retire it.
+                        Combined with each request returning <em>all</em> user data, it made attribute usage information
+                        hard to find.
+                    </dd>
+                    <dt>Out-of-band consent data</dt>
+                    <dd>
+                        Whether the user consented to use of attributes for personalized ads, communications, marketing
+                        or editorial content had to be requested from separate services.
+                        This caused unnecessary complexity for data consumers.
+                    </dd>
+                    <dt>Platform bottleneck</dt>
+                    <dd>
+                        Appending user attributes required significant work for the maintaining platform team.
+                        One column per user attribute implied schema migrations and accompanying application code
+                        changes whenever, e.g., a marketing team wanted to test new personalized messages.
+                        The fast pace of these teams are important for the organization.
+                    </dd>
+                </dl>
+                <p>
+                    While the previous iterations of the user data services have provided tremendous value for Amedia,
+                    Inquire was built to confront the challenges listed above.
                 </p>
             </section>
             <section>
@@ -102,8 +105,8 @@
                     Almost all user analytics data lives in Google BigQuery, and is updated at most daily.
                     The batch ingest pipeline regularly checks source tables for updates and makes sure that the latest
                     data is imported to the Inquire database.
-                    Other data, like users' consents to data usage are retrieved from message queues via the stream
-                    ingestor, immediately following changes to the user's preferences.
+                    Other data, user consents, are retrieved from message queues via the stream ingestor, immediately
+                    following changes to the user's preferences.
                 </p>
                 <p>
                     The database schema is based on the <a
