@@ -315,3 +315,32 @@ div.article-metadata {
     }
   }
 }
+
+
+/* Style the anchor link on the right side of headings */
+.self-link {
+  text-decoration: none;
+  color: inherit;
+  margin-left: 0.5em;
+  font-size: 0.8em;
+  opacity: 0;
+  transition: opacity 0.2s;
+  position: relative;
+}
+
+/* Make it visible on hover */
+h1:hover .self-link,
+h2:hover .self-link,
+h3:hover .self-link,
+h4:hover .self-link,
+h5:hover .self-link,
+h6:hover .self-link {
+  opacity: 0.6;
+}
+
+/* On hover over the link itself */
+.self-link:hover {
+  opacity: 1;
+  color: #007acc;
+  /* Optional: color pop on hover */
+}

@@ -6,6 +6,8 @@
     <title>Inquire - Glenn's Notepad</title>
     <meta charset="UTF-8">
     <meta name="author" content="Glenn Bitar">
+    <script src="/self-links.js"></script>
+    <script src="/toc.js"></script>
 </head>
 
 <body>
@@ -23,7 +25,7 @@
                     Published <time datetime="2025-08-03">August 3, 2025</time>.
                 </div>
             </header>
-            <section>
+            <section id="tldr">
                 <h3>TLDR</h3>
                 <p>
                     During 2024 and 2025 I led the design and development of <em>Inquire</em>, a centralized user data
@@ -50,7 +52,11 @@
                     </li>
                 </ul>
             </section>
-            <section>
+            <details>
+                <summary>Table of contents</summary>
+                <nav id="toc"></nav>
+            </details>
+            <section id="background">
                 <h3>Background</h3>
                 <p>
                     At <a href="https://www.amedia.no/">Amedia</a>, we host and develop for more than 100 local
@@ -101,8 +107,7 @@
                     Inquire was built to confront the challenges listed above.
                 </p>
             </section>
-
-            <section>
+            <section id="system-overview">
                 <h3>System overview</h3>
                 <p>
                     Inquire consists of a central <strong>Postgres database</strong>, an <strong>HTTP/JSON
@@ -141,10 +146,10 @@
                     stored data types.
                 </p>
             </section>
-            <section>
+            <section id="key-challenges">
                 <h3>Key challenges</h3>
                 A selection of key challenges and areas where I had important contributions and learnings.
-                <section>
+                <section id="navigating-idp">
                     <h4>Navigating our internal development platform</h4>
                     <p>
                         Amedia is my first job focused mainly on web development.
@@ -181,7 +186,7 @@
                         The attribute catalog contains a human-readable name and expected type information.
                     </p>
                 </section>
-                <section>
+                <section id="consent-integration">
                     <h4>Consent integration</h4>
                     <p>
                         In addition to the main data table and the attribute catalog, we have a table describing
@@ -197,7 +202,7 @@
                         unavailable under the <em>ads</em> purpose.
                     </p>
                 </section>
-                <section>
+                <section id="TODO">
                     <h4>Composed attributes</h4>
                     <p>
                         Some user attributes are functions of multiple points of data.
@@ -228,7 +233,7 @@
                         </dd>
                     </dl>
                 </section>
-                <section>
+                <section id="management-dashboard">
                     <h4>Easy-to-use management dashboard</h4>
                     <p>
                         Our flexible data model gives us the power to add attributes, modify their composition or type,
@@ -312,7 +317,7 @@
                         </figure>
                     </section>
                 </section>
-                <section>
+                <section id="type-checking">
                     <h4>Type checking of attribute values</h4>
                     <p>
                         The <a href="#flexible-data-modeling-with-eav">EAV data model</a> we use store attribute values
@@ -331,7 +336,7 @@
                         worthwhile.
                     </p>
                 </section>
-                <section>
+                <section id="metrics">
                     <h4>High-resolution metrics</h4>
                     <p>
                         We have metrics recording the use of each virtual attribute per consumer per purpose.
@@ -351,10 +356,48 @@
                         of when attribute data went stale, monitor compliance of our privacy policy, and more.
                     </p>
                 </section>
-                <em>
-                    <h4>In-memory caching for performance</h4>
-                    <p>TODO</p>
-                </em>
+                <section id="performance-considerations">
+                    <h4>Performance considerations</h4>
+                    <p>
+                        The <a href="#flexible-data-modeling-with-eav">EAV data model</a> places multiple rows per user
+                        in our data table.
+                        This bars us from using a single ID (e.g., user ID) as lookup value when fetching data for a
+                        user.
+                        Instead, we have to fetch rows corresponding for all relevant attributes for that user.
+                        We also make the observation that multiple requests for the same user (but for different
+                        attributes) is likely to occur within a short span of time, since multiple backends querying
+                        Inquire are involved for every page load.
+                    </p>
+                    <p>
+                        Adding an index on user ID is necessary to make the EAV model feasible, and makes multi-row
+                        lookups fast.
+                    </p>
+                    <p>
+                        To avoid hitting the database for each request for the same user in the same page load, we added
+                        an in-memory cache to the API application.
+                        When <em>any</em> user data is requested, we fetch <em>all</em> attribute values for that user
+                        and store them in the cache for a couple of seconds.
+                        Subsequent reqeuests for that user use in-memory attribute values.
+                        We have approximately 30% cache hit rate.
+                        This is quite low, but is explained by us having multiple replicas, so subsequent requests might
+                        hit a different process.
+                        Each cache hit saves a database round-trip.
+                    </p>
+                </section>
+            </section>
+            <section id="impact">
+                <h3>Impact</h3>
+                <p>
+                    Inquire is the central analytics user data API for personalization across Amedia's product
+                    ecosystem, serving hundreds of millions of requests monthly.
+                    By addressing flexibility, governance, and observability, it has empowered product and marketing
+                    teams to iterate faster.
+                </p>
+                <p>
+                    My role in leading the system's architecture, data modeling, and ingestion pipelines has given me
+                    deep experience in building scalable, developer-friendly platforms with high organizational
+                    leverage.
+                </p>
             </section>
         </article>
     </main>
