@@ -246,7 +246,7 @@ label, legend, fieldset {
 
 dl {
   display: grid;
-  grid-template-columns: minmax(10ch, 25ch) 1fr;
+  grid-template-columns: fit-content(25ch) 1fr;
   column-gap: 0.5em;
   align-items: baseline;
 }
@@ -259,4 +259,9 @@ dt {
 dd {
   margin: 0;
   /* Remove default margin */
+}
+
+div.article-metadata {
+  font-style: italic;
+  opacity: 0.75;
 }
