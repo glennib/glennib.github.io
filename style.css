@@ -265,3 +265,21 @@ div.article-metadata {
   font-style: italic;
   opacity: 0.75;
 }
+
+.carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  gap: 1rem;
+  padding: 1rem 0;
+
+  figure {
+    flex: 0 0 auto;
+    width: 80%;
+    height: auto;
+
+    img {
+    border-radius: 8px;}
+  }
+}
+
