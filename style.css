@@ -344,3 +344,21 @@ h6:hover .self-link {
   color: #007acc;
   /* Optional: color pop on hover */
 }
+
+aside {
+  background-color: #f1f1f1;
+  border-left: 4px solid #982c61;
+  border-right: 4px solid #982c61;
+  padding: 1rem 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  opacity: 0.95;
+  border-radius: 10px;
+
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+  }
+  p:last-of-type {
+    margin-bottom: 0;
+  }
+}
