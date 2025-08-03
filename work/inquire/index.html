@@ -37,9 +37,8 @@
                         user attributes.
                     </li>
                     <li>
-                        Built an attribute catalog and intuitive management dashboard to enable high degree of
-                        self-service
-                        and reduce platform bottlenecks.
+                        Built an attribute catalog and intuitive management dashboard to enable a high degree of
+                        self-service and reduce platform bottlenecks.
                     </li>
                     <li>
                         Integrated metrics to provide data owners with high-resolution insights into usage patterns.
@@ -60,16 +59,16 @@
                 <h3>Background</h3>
                 <p>
                     At <a href="https://www.amedia.no/">Amedia</a>, we host and develop for more than 100 local
-                    newspaper across Norway.
+                    newspapers across Norway.
                     A portion of Amedia's success is owed to partially personalized front pages, along with personalized
                     marketing and communications.
                     Amedia's backend is a collection of (micro) services called in a variety of situations, e.g., to
                     serve the contents of an article, a front-page teaser, or marketing messages.
                 </p>
                 <p>
-                    Since each page load is partially tailored to the logged in user, many of the backend services
-                    require attributes of the user in order to function optimally.
-                    Much of this data lives in our data lake, which is not optimized for fast, single-row acces (i.e.,
+                    Since each page load is partially tailored to the logged-in user, many of the backend services
+                    require attributes of the user to function optimally.
+                    Much of this data lives in our data lake, which is not optimized for fast, single-row access (i.e.,
                     data for a single user).
                 </p>
                 <p>
@@ -81,15 +80,14 @@
                 <dl>
                     <dt>Need for high-resolution usage metrics</dt>
                     <dd>
-                        Not having usage metrics on the attribute level left us searching in our codebases for whether
-                        or not an attribute was used if we wanted to retire it.
+                        Not having usage metrics on the attribute level left us searching in our codebases for whether an attribute was used if we wanted to retire it.
                         Combined with each request returning <em>all</em> user data, it made attribute usage information
                         hard to find.
                     </dd>
 
                     <dt>Out-of-band consent data</dt>
                     <dd>
-                        Whether the user consented to use of attributes for personalized ads, communications, marketing
+                        Whether the user consented to use of attributes for personalized ads, communications, marketing,
                         or editorial content had to be requested from separate services.
                         This caused unnecessary complexity for data consumers.
                     </dd>
@@ -99,7 +97,7 @@
                         Appending user attributes required significant work for the maintaining platform team.
                         One column per user attribute implied schema migrations and accompanying application code
                         changes whenever, e.g., a marketing team wanted to test new personalized messages.
-                        The fast pace of these teams are important for the organization.
+                        The fast pace of these teams is important for the organization.
                     </dd>
                 </dl>
                 <p>
@@ -125,60 +123,46 @@
                     <dd>for attribute onboarding and observability.</dd>
                 </dl>
                 <p>
-                    Inquire is a system composed of a central database containing the user data and attribute catalogs,
-                    a HTTP/JSON service that serves this data to logged-in clients and other backend services,
-                    and multiple support components, including a management dashboard and pipelines for batch and stream
-                    ingestion.
-                </p>
-                <p>
-                    Almost all user analytics data lives in Google BigQuery, and is updated at most daily.
+                    Almost all user analytics data lives in Google BigQuery and is updated at most daily.
                     The batch ingest pipeline regularly checks source tables for updates and makes sure that the latest
                     data is imported to the Inquire database.
                     Other data, user consents, are retrieved from message queues via the stream ingestor, immediately
                     following changes to the user's preferences.
                 </p>
-                <p>
-                    The database schema is based on the <a
-                        href="https://en.wikipedia.org/wiki/Entity%E2%80%93attribute%E2%80%93value_model">entity-attribute-value</a>
-                    (EAV) model, where the main database table has one row per user per attribute, and a single data
-                    value column.
-                    The value column is <code>jsonb</code> (this is a Postgres database), allowing for a variety of
-                    stored data types.
-                </p>
             </section>
-            <section id="key-challenges">
-                <h3>Key challenges</h3>
+            <section id="key-design-decisions-challenges">
+                <h3>Key design decisions and challenges</h3>
                 A selection of key challenges and areas where I had important contributions and learnings.
                 <section id="navigating-idp">
                     <h4>Navigating our internal development platform</h4>
                     <p>
                         Amedia is my first job focused mainly on web development.
                         Having a background from research and robotics, I had very little in-depth experience with
-                        topics like HTTP, REST (whatever that means), databases, and caching.
-                        Amedia is an organization where it's possible to move fast and spin up new backends to solve
-                        narrow problems on a whim.
-                        This also means that cohesion and uniformity is not the main priority.
+                        topics like HTTP, REST (<a
+                            href="https://htmx.org/essays/how-did-rest-come-to-mean-the-opposite-of-rest/">whatever that
+                            means</a>), databases, and caching when I started there.
+                        At Amedia, we can move fast and spin up backends quickly to solve narrow problems.
+                        This also means that cohesion and uniformity have not always been the main priorities.
                         The GitHub organization has close to a thousand repositories in
                         <span
                             title="In my very short investigation, I found the following languages: Python, Rust, Go, Kotlin, Java, Javascript, Clojure, Swift, Typescript, Dart, Scala, Php, Ruby.">than
-                            13 languages(!)
+                            more than 13 languages(!)
                         </span>.
                     </p>
                     <p>
                         As the sole developer on our data platform team with the time and motivation for developing API
-                        services, moving from task to deployment was a challenge.
-                        Especially since most of the consepts were new to me.
+                        services (at least at the time), moving from task to deployment was a big learning opportunity.
+                        Especially since most of the concepts were new to me.
                         When I started this work, much of the knowledge needed to deploy a service was distributed among
-                        the many teams, and a uniform guide or a "golden path" did not exist.
-                        For a while I was the annoying guy constantly asking questions to our IDP team to get from start
-                        to finish.
+                        the many teams, and a central guide or a "golden path" did not exist.
+                        This meant I had to work closely with our IDP team to iron out a few difficulties.
                     </p>
                 </section>
                 <section id="flexible-data-modeling-with-eav">
                     <h4>Flexible data modeling with EAV</h4>
                     <p>
                         A key design choice in Inquire is an entity-attribute-value data model.
-                        This removes the need for schema migrations or application changes changes when a new attribute
+                        This removes the need for schema migrations or application changes when a new attribute
                         is added.
                         Each row contains a user ID, an attribute ID which references an attribute catalog, metadata
                         describing when data was updated and when it becomes stale, and the data value itself, stored as
@@ -205,8 +189,8 @@
                 <section id="composed-attributes">
                     <h4>Composed attributes</h4>
                     <p>
-                        Some user attributes are functions of multiple points of data.
-                        For instance, a user changing their newspaper subscription plan is a rare occurence, therefore,
+                        Some user attributes are functions data points.
+                        For instance, a user changing their newspaper subscription plan is a rare occurrence, therefore,
                         the <code>subscription_plan_batch</code> attribute is based on a table in our data lake, which
                         is updated and ingested nightly.
                         However, we also receive events when this happens, which creates or updates the
@@ -256,7 +240,7 @@
                         POST to the edit and new endpoints.
                     </p>
                     <p>
-                        The management dashboard allows us to swiftly carry out necessary modifications, and lets us get
+                        The management dashboard allows us to swiftly carry out necessary modifications and lets us get
                         fast overviews of the data in our service.
                     </p>
                     <section class="carousel">
@@ -331,10 +315,10 @@
                 <section id="type-checking">
                     <h4>Type checking of attribute values</h4>
                     <p>
-                        The <a href="#flexible-data-modeling-with-eav">EAV data model</a> we use store attribute values
+                        The <a href="#flexible-data-modeling-with-eav">EAV data model</a> we store attribute values
                         as JSON in the database.
                         This is great for flexibility, but sacrifices type safety at rest.
-                        To simplify the batch ingestor pipeline, we do not have type checking of the data imported from
+                        To simplify the batch ingestor pipeline, we do not have any type checking of the data imported from
                         our data lake.
                         (The data in our data lake is, however, typed.)
                         Instead, we type check the JSON data on every query from consumers, and log fatal errors if a
@@ -351,7 +335,7 @@
                     <h4>High-resolution metrics</h4>
                     <p>
                         We have metrics recording the use of each virtual attribute per consumer per purpose.
-                        Additionally, we record whether or not a request for an attribute returned a null value or
+                        Additionally, we record whether a request for an attribute returned a null value or
                         actual data.
                         This allows us to answer questions like these:
                     </p>
@@ -380,7 +364,7 @@
                         Inquire are involved for every page load.
                     </p>
                     <p>
-                        Adding an index on user ID is necessary to make the EAV model feasible, and makes multi-row
+                        Adding an index on user ID is necessary to make the EAV model feasible and makes multi-row
                         lookups fast.
                     </p>
                     <p>
@@ -388,7 +372,7 @@
                         an in-memory cache to the API application.
                         When <em>any</em> user data is requested, we fetch <em>all</em> attribute values for that user
                         and store them in the cache for a couple of seconds.
-                        Subsequent reqeuests for that user use in-memory attribute values.
+                        Subsequent requests for that user use in-memory attribute values.
                         We have approximately 30% cache hit rate.
                         This is quite low, but is explained by us having multiple replicas, so subsequent requests might
                         hit a different process.
@@ -405,9 +389,8 @@
                     teams to iterate faster.
                 </p>
                 <p>
-                    My role in leading the system's architecture, data modeling, and ingestion pipelines has given me
-                    deep experience in building scalable, developer-friendly platforms with high organizational
-                    leverage.
+                    My role in leading the design and implementation of the system's architecture, data modeling, and
+                    APIs has given me valuable experience in building scalable, developer-friendly platforms.
                 </p>
             </section>
         </article>
