@@ -69,10 +69,10 @@
         serve the contents of an article, a front-page teaser, or marketing messages.
       </p>
       <p>
-        Since each page load is partially tailored to the logged-in user, many of the backend services
+        Since each page load is partially personalized to the logged-in user, many of the backend services
         require attributes of the user to function optimally.
-        Much of this data lives in our data lake, which is not optimized for fast, single-row access (i.e.,
-        data for a single user).
+        Much of this data lives in our data lake, which is not optimized for fast, random-access queries for individual
+        users.
       </p>
       <p>
         To support in-flight requests for user analytics, Amedia has over the course of several years
@@ -142,8 +142,9 @@
         <h4>Navigating our internal development platform</h4>
         <p>
           Amedia is my first job focused mainly on web development.
-          Coming from a research and robotics background, web development was new terrain — HTTP, REST, databases, and
-          caching were all unfamiliar.
+          Amedia was my first job focused on web development.
+          Coming from a research and robotics background, HTTP, REST, and even databases were new to me.
+          This made standing up API services both a challenge and a learning opportunity.
           At Amedia, we can move fast and spin up backends quickly to solve narrow problems.
           This also means that cohesion and uniformity have not always been the main priorities.
           The GitHub organization has close to a thousand repositories in
