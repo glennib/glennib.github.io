@@ -296,7 +296,7 @@ dl.dl-inline {
     }
 }
 
-div.article-metadata {
+.article-metadata {
     font-style: italic;
     opacity: 0.75;
 }
@@ -372,4 +372,10 @@ ul.blog-list {
         display: block;
         opacity: 75%;
     }
+}
+
+footer {
+    text-align: center;
+    background-color: #f1f1f1;
+    border-radius: 10px;
 }
