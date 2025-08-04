@@ -80,8 +80,8 @@
         <em>Inquire</em> is the third iteration of a user data service, and was made to address some
         challenges that were revealed along the way:
       </p>
-      <dl>
-        <dt>Need for high-resolution usage metrics</dt>
+      <dl class="dl-inline">
+        <dt>Need for high-resolution usage metrics:</dt>
         <dd>
           Not having usage metrics on the attribute level left us searching in our codebases for whether an attribute
           was used if we wanted to retire it.
@@ -89,7 +89,7 @@
           hard to find.
         </dd>
 
-        <dt>Out-of-band consent data</dt>
+        <dt>Out-of-band consent data:</dt>
         <dd>
           Whether the user consented to use of attributes for personalized ads, communications, marketing,
           or editorial content had to be requested from separate services.
@@ -97,7 +97,7 @@
           multiple services
         </dd>
 
-        <dt>Platform bottleneck</dt>
+        <dt>Platform bottleneck:</dt>
         <dd>
           Appending user attributes required significant work for the maintaining platform team.
           One column per user attribute implied schema migrations and accompanying application code
@@ -117,7 +117,7 @@
         service</strong> that serves user data to downstream consumers, and a suite of support
         components:
       </p>
-      <dl>
+      <dl class="dl-inline">
         <dt>Batch ingestion pipeline</dt>
         <dd>for periodic loading from the data lake.</dd>
 
@@ -214,14 +214,14 @@
           A virtual attribute's value resolves to one of the physical values depending on the chosen
           <em>selection strategy</em> for that virtual attribute:
         </p>
-        <dl>
-          <dt>Coalesce</dt>
+        <dl class="dl-inline">
+          <dt>Coalesce:</dt>
           <dd>The first non-null value in the ordered list of physical attributes.</dd>
 
-          <dt>Newest</dt>
+          <dt>Newest:</dt>
           <dd>The newest non-null value among the list of physical attributes. Order is ignored.</dd>
 
-          <dt>Special</dt>
+          <dt>Special:</dt>
           <dd>
             Value selection or composition is hard-coded in the application, i.e., not configurable at
             runtime.
