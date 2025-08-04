@@ -36,21 +36,21 @@
       </p>
       <ul>
         <li>
-          Adopted an entity-attribute-value (EAV) data model for flexibility and rapid onboarding of new
-          user attributes.
+          I chose an entity-attribute-value (EAV) data model to avoid the friction of schema changes and let teams
+          onboard new attributes quickly.
         </li>
         <li>
-          Built an attribute catalog and intuitive management dashboard to enable a high degree of
-          self-service and reduce platform bottlenecks.
+          I built attribute catalogs and an intuitive management dashboard to enable a high degree of self-service and
+          to reduce platform bottlenecks.
         </li>
         <li>
-          Integrated metrics to provide data owners with high-resolution insights into usage patterns.
+          I integrated metrics to provide data owners with high-resolution insights into usage patterns.
         </li>
         <li>
-          Incorporated user consent data, ensuring compliant and confident data access for consumers.
+          I incorporated user consent data, ensuring compliant and confident data access for consumers.
         </li>
         <li>
-          Implemented in-flight type checking to guarantee the correctness of delivered data.
+          I implemented in-flight type checking to guarantee the correctness of delivered data.
         </li>
       </ul>
     </section>
@@ -93,7 +93,8 @@
         <dd>
           Whether the user consented to use of attributes for personalized ads, communications, marketing,
           or editorial content had to be requested from separate services.
-          This caused unnecessary complexity for data consumers.
+          This fragmented setup made life harder for data consumers, who had to piece together user context from
+          multiple services
         </dd>
 
         <dt>Platform bottleneck</dt>
@@ -141,10 +142,8 @@
         <h4>Navigating our internal development platform</h4>
         <p>
           Amedia is my first job focused mainly on web development.
-          Having a background from research and robotics, I had very little in-depth experience with
-          topics like HTTP, REST (<a
-          href="https://htmx.org/essays/how-did-rest-come-to-mean-the-opposite-of-rest/">whatever that
-          means</a>), databases, and caching when I started there.
+          Coming from a research and robotics background, web development was new terrain — HTTP, REST, databases, and
+          caching were all unfamiliar.
           At Amedia, we can move fast and spin up backends quickly to solve narrow problems.
           This also means that cohesion and uniformity have not always been the main priorities.
           The GitHub organization has close to a thousand repositories in
@@ -159,19 +158,19 @@
           Especially since most of the concepts were new to me.
           When I started this work, much of the knowledge needed to deploy a service was distributed among
           the many teams, and a central guide or a "golden path" did not exist.
-          This meant I had to work closely with our IDP team to iron out a few difficulties.
+          I worked closely with the IDP team to debug unclear parts of the deployment pipeline and smooth over internal
+          friction.
         </p>
       </section>
       <section id="flexible-data-modeling-with-eav">
         <h4>Flexible data modeling with EAV</h4>
         <p>
           A key design choice in Inquire is an entity-attribute-value data model.
-          This removes the need for schema migrations or application changes when a new attribute
-          is added.
-          Each row contains a user ID, an attribute ID which references an attribute catalog, metadata
-          describing when data was updated and when it becomes stale, and the data value itself, stored as
+          Data is stored in a table with columns for user ID, attribute ID which references an attribute catalog,
+          metadata describing when data was updated and when it becomes stale, and the data value itself, stored as
           JSON.
           The attribute catalog contains a human-readable name and expected type information.
+          This lets us avoid constant schema migrations and unblock teams who wanted to test new attributes quickly.
         </p>
       </section>
       <section id="consent-integration">
@@ -186,14 +185,15 @@
         <p>
           Some attributes are only allowed to be used under certain purposes.
           For example, we allow the <code>sports_affinity</code> under the <em>editorial</em> purpose
-          (given the user opts in to personalization for that purpose), while letting it be completely
-          unavailable under the <em>ads</em> purpose.
+          (given the user opts in to personalization for that purpose), while making in unavailable under the
+          <em>ads</em> purpose.
+          This simplifies downstream logic for consumers.
         </p>
       </section>
       <section id="composed-attributes">
         <h4>Composed attributes</h4>
         <p>
-          Some user attributes are functions data points.
+          Some attributes are derived from multiple data sources.
           For instance, a user changing their newspaper subscription plan is a rare occurrence, therefore,
           the <code>subscription_plan_batch</code> attribute is based on a table in our data lake, which
           is updated and ingested nightly.
@@ -220,6 +220,10 @@
             runtime.
           </dd>
         </dl>
+        <p>
+          Virtual attributes lets us present a clean and stable interface to consumers, even when underlying data
+          sources change, vary in freshness, or in reliability.
+        </p>
       </section>
       <section id="management-dashboard">
         <h4>Easy-to-use management dashboard</h4>
@@ -351,8 +355,8 @@
           <li>An attribute's hit rate suddenly dropped to 0%, why?</li>
         </ul>
         <p>
-          This helps us coordinate with consumers when a certain attribute needs to be retired, be aware
-          of when attribute data went stale, monitor compliance of our privacy policy, and more.
+          These metrics have been invaluable.
+          We can now confidently deprecate attributes, catch stale data early, and prove compliance when needed.
         </p>
       </section>
       <section id="performance-considerations">
@@ -368,8 +372,7 @@
           Inquire are involved for every page load.
         </p>
         <p>
-          Adding an index on user ID is necessary to make the EAV model feasible and makes multi-row
-          lookups fast.
+          To make the EAV model viable at scale, I indexed user ID to speed up multi-row lookups.
         </p>
         <p>
           To avoid hitting the database for each request for the same user in the same page load, we added
