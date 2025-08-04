@@ -131,8 +131,13 @@
         Almost all user analytics data lives in Google BigQuery and is updated at most daily.
         The batch ingest pipeline regularly checks source tables for updates and makes sure that the latest
         data is imported to the Inquire database.
-        Other data, user consents, are retrieved from message queues via the stream ingestor, immediately
+        Other data, such as user consents, are retrieved from message queues via the stream ingestor, immediately
         following changes to the user's preferences.
+      </p>
+      <p>
+        I initially wrote the main HTTP/JSON service in Rust, and the support components in Python.
+        However, since then, all the support services have been migrated to Rust to achieve a homogenous code base for
+        this system.
       </p>
     </section>
     <section id="key-design-decisions-challenges">
@@ -150,8 +155,7 @@
           The GitHub organization has close to a thousand repositories in
           <span
             title="In my very short investigation, I found the following languages: Python, Rust, Go, Kotlin, Java, Javascript, Clojure, Swift, Typescript, Dart, Scala, Php, Ruby.">than
-                            more than 13 languages(!)
-                        </span>.
+                            more than 13 languages(!)</span>.
         </p>
         <p>
           As the sole developer on our data platform team with the time and motivation for developing API
@@ -161,6 +165,7 @@
           the many teams, and a central guide or a "golden path" did not exist.
           I worked closely with the IDP team to debug unclear parts of the deployment pipeline and smooth over internal
           friction.
+          Their responsiveness and willingness to collaborate were instrumental.
         </p>
       </section>
       <section id="flexible-data-modeling-with-eav">
@@ -180,15 +185,15 @@
           In addition to the main data table and the attribute catalog, we have a table describing
           data usage <em>purposes</em>, where we can map user consent to attributes.
           A user opts in to or out of separate purposes, so the same attribute for a given user may be
-          available under the <em>editorial</em> purpose but <code>null</code> under the
-          <em>marketing</em> purpose.
+          available under the <em>editorial</em> purpose but will be <code>null</code> under the
+          <em>marketing</em> purpose, if they opt out of personalized marketing.
         </p>
         <p>
           Some attributes are only allowed to be used under certain purposes.
           For example, we allow the <code>sports_affinity</code> under the <em>editorial</em> purpose
           (given the user opts in to personalization for that purpose), while making in unavailable under the
           <em>ads</em> purpose.
-          This simplifies downstream logic for consumers.
+          This simplifies downstream logic for data consumers who previously might have had to resolve this out of band.
         </p>
       </section>
       <section id="composed-attributes">
@@ -204,7 +209,8 @@
         <p>
           To streamline how the consumers use this data, they only see <em>virtual</em> user attributes,
           which are functions of the <em>physical</em> attributes we have talked about up until now.
-          A virtual attribute has an ordered list of physical attributes.
+          A virtual attribute (e.g., <code>subscription_plan</code>) has an ordered list of physical attributes (e.g.,
+          <code>[subscription_plan_stream, subscription_plan_batch]</code>).
           A virtual attribute's value resolves to one of the physical values depending on the chosen
           <em>selection strategy</em> for that virtual attribute:
         </p>
@@ -401,6 +407,12 @@
         APIs has given me valuable experience in building scalable, developer-friendly platforms.
       </p>
     </section>
+    <aside id="disclaimer">
+      <p>
+        This article reflects my personal experiences and opinions as a developer at Amedia.
+        It is not an official statement from the company.
+      </p>
+    </aside>
   </article>
 </main>
 </body>
