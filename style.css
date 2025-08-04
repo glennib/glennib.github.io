@@ -366,3 +366,10 @@ aside {
         margin-bottom: 0;
     }
 }
+
+ul.blog-list {
+    time {
+        display: block;
+        opacity: 75%;
+    }
+}
