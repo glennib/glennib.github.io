@@ -345,7 +345,6 @@ h6:hover .self-link {
 .self-link:hover {
     opacity: 1;
     color: #007acc;
-    /* Optional: color pop on hover */
 }
 
 aside {
