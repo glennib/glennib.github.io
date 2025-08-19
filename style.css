@@ -312,6 +312,7 @@ dl.dl-inline {
         flex: 0 0 auto;
         width: 80%;
         height: auto;
+        margin: 0;
 
         img {
             border-radius: 8px;
