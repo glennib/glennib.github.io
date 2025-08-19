@@ -303,7 +303,7 @@ dl.dl-inline {
 
 .carousel {
     display: flex;
-    overflow-x: auto;
+    overflow-x: scroll;
     scroll-snap-type: x proximity;
     gap: 1rem;
     padding: 1rem 0;
