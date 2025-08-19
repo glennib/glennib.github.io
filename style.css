@@ -299,6 +299,15 @@ dl.dl-inline {
 .article-metadata {
     font-style: italic;
     opacity: 0.75;
+
+    ul {
+        list-style: none;
+        padding-left: 0;
+
+        li {
+            display: inline;
+        }
+    }
 }
 
 .carousel {
