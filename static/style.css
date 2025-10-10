@@ -407,3 +407,10 @@ nav.links {
         }
     }
 }
+
+.site-title {
+    font-size: 2.35em;
+    font-weight: 700;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+}

@@ -1,0 +1,5 @@
+[tools]
+zola = "latest"
+
+[tasks.format-md]
+run = "docker run -v $(pwd):/data ghcr.io/bobheadxi/readable fmt"
