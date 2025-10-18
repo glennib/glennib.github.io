@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.title }} - {{ config.title }}{% endblock title %}
+
+{% block content %}
+<article>
+  <header>
+    <h1>{{ page.title }}</h1>
+    {% if page.date or page.updated %}
+    <section class="article-metadata">
+      <ul>
+        {% if page.date %}
+        <li>
+          Published <time datetime="{{ page.date }}">{{ page.date | date(format="%B %-d, %Y") }}</time>.
+        </li>
+        {% endif %}
+        {% if page.updated %}
+        <li>
+          Updated <time datetime="{{ page.updated }}">{{ page.updated | date(format="%B %d") }}</time>.
+        </li>
+        {% endif %}
+      </ul>
+    </section>
+    {% endif %}
+  </header>
+
+  {% if page.toc %}
+  <details>
+    <summary>Table of contents</summary>
+    <nav id="toc">
+      <ul>
+        {% for h1 in page.toc %}
+        <li>
+          <a href="{{ h1.permalink | safe }}">{{ h1.title }}</a>
+          {% if h1.children %}
+          <ul>
+            {% for h2 in h1.children %}
+            <li>
+              <a href="{{ h2.permalink | safe }}">{{ h2.title }}</a>
+              {% if h2.children %}
+              <ul>
+                {% for h3 in h2.children %}
+                <li>
+                  <a href="{{ h3.permalink | safe }}">{{ h3.title }}</a>
+                </li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </details>
+  {% endif %}
+
+  {{ page.content | safe }}
+</article>
+{% endblock content %}

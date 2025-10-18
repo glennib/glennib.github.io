@@ -1,0 +1,51 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache mise binary
+        id: cache-mise
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/bin/mise
+          key: ${{ runner.os }}-mise-binary-${{ hashFiles('.github/workflows/deploy.yml') }}
+
+      - name: Cache mise tools
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/mise
+          key: ${{ runner.os }}-mise-tools-${{ hashFiles('mise.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-mise-tools-
+
+      - name: Install mise
+        if: steps.cache-mise.outputs.cache-hit != 'true'
+        run: curl https://mise.run | sh
+
+      - name: Add mise to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install tools from mise.toml
+        run: mise install
+
+      - name: Build site
+        run: mise exec -- zola build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages

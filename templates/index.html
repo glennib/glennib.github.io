@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<article>
+  <p>
+    Hi.
+    My name is Glenn.
+    This is a place where I can write things down and link to them.
+    Like a blog, or something.
+  </p>
+
+  {% set blog_section = get_section(path="blog/_index.md") %}
+  {% if blog_section.subsections %}
+  {% for year_path in blog_section.subsections | reverse %}
+  {% set year_section = get_section(path=year_path) %}
+  {% if year_section.pages %}
+  <section>
+    <h2>
+      <time>{{ year_section.components | last }}</time>
+    </h2>
+    <ul class="blog-list">
+      {% for page in year_section.pages | reverse %}
+      <li>
+        <a href="{{ page.permalink }}">
+          {{ page.extra.list_title | default(value=page.title) }}
+        </a>
+        <time datetime="{{ page.date }}">{{ page.date | date(format="%B %-d, %Y") }}</time>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+  {% endfor %}
+  {% endif %}
+
+  <nav class="links">
+    <ul>
+      <li>
+        <a href="https://github.com/glennib/">github/glennib</a>
+      </li>
+      <!-- todo: add link to public cv
+      <li>
+        <a href="https://raw.githubusercontent.com/glennib/cv/refs/heads/main/cv.pdf">CV</a>
+      </li>
+      -->
+    </ul>
+  </nav>
+</article>
+{% endblock content %}
