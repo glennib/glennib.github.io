@@ -14,3 +14,6 @@
 - **Formatting:** Markdown should be formatted using the `format-md` task.
 - **Templates:** Keep logic minimal in templates; prefer `config.toml` [extra] variables.
 - **Content:** Use TOML front matter in Markdown files.
+
+## Constraints
+- Never run mutating git operations.
