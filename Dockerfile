@@ -1,31 +1,30 @@
-# Stage 1: Build the static site
-FROM ghcr.io/getzola/zola:latest AS builder
+# Stage 1: Build
+FROM debian:bookworm-slim AS builder
+
+# Copy zola binary from official image
+COPY --from=ghcr.io/getzola/zola:v0.21.0 /bin/zola /usr/local/bin/zola
 
 WORKDIR /project
 
-# Copy config first (changes less often)
+# Copy config first
 COPY config.toml .
 
-# Copy only necessary source directories
-COPY content content
-COPY static static
 COPY templates templates
+COPY static static
+COPY content content
 
-# Allow overriding base_url at build time (useful for k8s staging/prod)
+# Build
 ARG BASE_URL
 RUN if [ -n "$BASE_URL" ]; then \
-      zola build --base-url "$BASE_URL"; \
+    zola build --base-url "$BASE_URL"; \
     else \
-      zola build; \
+    zola build; \
     fi
 
-# Stage 2: Serve with Nginx
+# Stage 2: Serve
 FROM nginx:alpine
 
-# Copy static assets from builder
 COPY --from=builder /project/public /usr/share/nginx/html
-
-# Copy custom nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
