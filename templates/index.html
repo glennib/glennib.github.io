@@ -19,7 +19,7 @@
       <time>{{ year_section.components | last }}</time>
     </h2>
     <ul class="blog-list">
-      {% for page in year_section.pages | reverse %}
+      {% for page in year_section.pages | sort(attribute="date") | reverse %}
       <li>
         <a href="{{ page.permalink }}">
           {{ page.extra.list_title | default(value=page.title) }}
