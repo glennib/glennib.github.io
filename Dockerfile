@@ -1,4 +1,4 @@
-FROM nginx:mainline
+FROM docker.io/nginx:mainline
 
 # Install nginx
 
